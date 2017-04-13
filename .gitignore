@@ -3,6 +3,10 @@ local.properties
 keystore.properties
 *.apk
 
+# "restricted" information
+endpoint.properties
+
+
 # Windows thumbnail db
 Thumbs.db
 

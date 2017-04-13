@@ -1,5 +1,6 @@
 package com.lekz112.test.di;
 
+import com.lekz112.test.BuildConfig;
 import com.lekz112.test.di.util.ApplicationScope;
 
 import javax.inject.Named;
@@ -17,8 +18,7 @@ public class EndPointModule {
     @Provides
     @Named(API_ENDPOINT)
     public HttpUrl httpUrl() {
-        // TODO: get from BuildConfig
-        return HttpUrl.parse("http://localhost/");
+        return HttpUrl.parse(BuildConfig.ENDPOINT_URL);
     }
 
 }

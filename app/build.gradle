@@ -2,6 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.neenbedankt.android-apt'
 
+def endpointPropertiesFile = rootProject.file("endpoint.properties")
+def endpointProperties = new Properties()
+def hasEndpoint = endpointPropertiesFile.exists()
+if (hasEndpoint) {
+    endpointProperties.load(new FileInputStream(endpointPropertiesFile))
+}
+
 
 android {
     compileSdkVersion 25
@@ -12,6 +19,15 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+
+        // Try to get endpoint address from properties file
+        // Fallback to localhost if we don't have one
+        if (hasEndpoint) {
+            buildConfigField "String", "ENDPOINT_URL", endpointProperties['url']
+        } else {
+            buildConfigField "String", "ENDPOINT_URL", "\"http://localhost/\""
+        }
+
     }
     compileOptions {
         // TODO: setup tests to run on JDK 6
