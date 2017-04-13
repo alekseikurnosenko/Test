@@ -2,6 +2,8 @@
 <manifest package="com.lekz112.test"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".ui.TestApplication"
         android:allowBackup="true"

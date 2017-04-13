@@ -1,9 +1,12 @@
 package com.lekz112.test.ui.main.list;
 
 import com.bluelinelabs.conductor.Controller;
+import com.bluelinelabs.conductor.RouterTransaction;
 import com.lekz112.test.R;
 import com.lekz112.test.di.util.ControllerInjection;
+import com.lekz112.test.service.Customer;
 import com.lekz112.test.service.network.NetworkService;
+import com.lekz112.test.ui.main.tables.TablesController;
 import com.lekz112.test.ui.util.Titleable;
 
 import android.support.annotation.NonNull;
@@ -66,6 +69,13 @@ public class CustomersController extends Controller implements Titleable, Custom
         return view;
     }
 
+    @Override
+    protected void onDestroyView(@NonNull View view) {
+        ButterKnife.unbind(this);
+        customersSubscription.dispose();
+        super.onDestroyView(view);
+    }
+
     private void loadCustomers() {
         viewFlipper.setDisplayedChild(PROGRESS);
         customersSubscription.dispose();
@@ -79,19 +89,17 @@ public class CustomersController extends Controller implements Titleable, Custom
     }
 
     @Override
-    protected void onDestroyView(@NonNull View view) {
-        super.onDestroyView(view);
-        customersSubscription.dispose();
-    }
-
-    @Override
     public String getTitle() {
         return getActivity().getString(R.string.customers_title);
     }
 
     @Override
     public void onItemClick(int position) {
-        // TODO:
+        Customer customer = customersAdapter.getCustomer(position);
+        TablesController tablesController = new TablesController();
+        // Pass customer?
+        getRouter().pushController(RouterTransaction.with(tablesController));
+
     }
 
     @OnClick(R.id.list_button_retry)

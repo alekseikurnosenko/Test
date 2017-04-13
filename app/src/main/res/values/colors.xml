@@ -6,4 +6,8 @@
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="textColorSecondary">#727272</color>
     <color name="divider">#B6B6B6</color>
+
+    <color name="green">#25ca25</color>
+    <color name="red">#bc2121</color>
+    <color name="yellow">#f1ed21</color>
 </resources>

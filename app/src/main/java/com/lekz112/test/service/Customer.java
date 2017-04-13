@@ -10,4 +10,8 @@ public abstract class Customer {
     public abstract String lastName();
 
     public abstract long id();
+
+    public static Customer create(String firstName, String lastName, long id) {
+        return new AutoValue_Customer(firstName, lastName, id);
+    }
 }

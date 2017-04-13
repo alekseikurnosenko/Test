@@ -15,6 +15,6 @@ public class CustomerModel {
     public Long id;
 
     public Optional<Customer> convert() {
-        return Optional.empty();
+        return Optional.of(Customer.create(firstName, lastName, id));
     }
 }
