@@ -15,6 +15,6 @@ public abstract class ListControllerModule {
     @Binds
     @IntoMap
     @ControllerKey(CustomersController.class)
-    abstract AndroidInjector.Factory<? extends Controller> bindYourActivityInjectorFactory(
+    abstract AndroidInjector.Factory<? extends Controller> controllerFactory(
             ListControllerSubcomponent.Builder builder);
 }

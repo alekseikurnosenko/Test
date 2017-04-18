@@ -2,6 +2,7 @@ package com.lekz112.test.ui;
 
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.lekz112.test.di.ApplicationComponent;
+import com.lekz112.test.di.ApplicationModule;
 import com.lekz112.test.di.DaggerApplicationComponent;
 import com.lekz112.test.di.ServiceModule;
 import com.lekz112.test.service.network.NetworkService;
@@ -36,11 +37,12 @@ public class TestApplication extends Application implements HasDispatchingActivi
 
     // TODO: Override during instrumentation testing
     protected ApplicationComponent buildComponent() {
-        return DaggerApplicationComponent.create();
+        return DaggerApplicationComponent.builder().applicationModule(new ApplicationModule(this)).build();
     }
 
     private ApplicationComponent buildStubComponent() {
         return DaggerApplicationComponent.builder()
+                .applicationModule(new ApplicationModule(this))
                 .serviceModule(new ServiceModule() {
                     @Override
                     public NetworkService networkService(RestNetworkService restNetworkService) {

@@ -3,7 +3,11 @@ CREATE TABLE reservations (
     table_id INTEGER NOT NULL,
     customer_id INTEGER NOT NULL
     -- additional info about reservation goes here
+    -- don't forget to update unique index!
 );
+
+create_index:
+CREATE UNIQUE INDEX reservations_index ON reservations(table_id, customer_id);
 
 add_reservation:
 INSERT INTO reservations (table_id, customer_id) VALUES (?, ?);

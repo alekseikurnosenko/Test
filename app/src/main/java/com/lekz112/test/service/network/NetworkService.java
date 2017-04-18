@@ -5,12 +5,12 @@ import com.lekz112.test.service.Table;
 
 import java.util.List;
 
-import io.reactivex.Single;
+import io.reactivex.Observable;
 
 public interface NetworkService {
 
-    Single<List<Customer>> getCustomers();
+    Observable<List<Customer>> getCustomers();
 
-    Single<List<Table>> getTables();
+    Observable<List<Table>> getTables();
 
 }

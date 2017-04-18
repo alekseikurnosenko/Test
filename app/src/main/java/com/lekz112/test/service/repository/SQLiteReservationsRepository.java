@@ -1,14 +1,14 @@
 package com.lekz112.test.service.repository;
 
-import android.annotation.SuppressLint;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.lekz112.test.service.Customer;
 import com.lekz112.test.service.Table;
 import com.squareup.sqldelight.SqlDelightStatement;
+
+import android.annotation.SuppressLint;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class SQLiteReservationsRepository implements ReservationsRepository {
     }
 
     @Override
-    public void setCustomer(List<Customer> customers) {
+    public void setCustomers(List<Customer> customers) {
         database.beginTransaction();
         try {
             // Clear all tables
@@ -77,6 +77,7 @@ public class SQLiteReservationsRepository implements ReservationsRepository {
                     } else {
                         // Key changed, rollback
                         cursor.moveToPrevious();
+                        break;
                     }
                 }
 

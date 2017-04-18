@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Single;
+import io.reactivex.Observable;
 
 @ApplicationScope
 public class StubNetworkService implements NetworkService {
@@ -18,12 +18,12 @@ public class StubNetworkService implements NetworkService {
     }
 
     @Override
-    public Single<List<Customer>> getCustomers() {
+    public Observable<List<Customer>> getCustomers() {
         return null;
     }
 
     @Override
-    public Single<List<Table>> getTables() {
+    public Observable<List<Table>> getTables() {
         return null;
     }
 }

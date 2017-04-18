@@ -9,7 +9,7 @@ public interface ReservationsRepository {
 
     List<Customer> getCustomers();
 
-    void setCustomer(List<Customer> customer);
+    void setCustomers(List<Customer> customer);
 
     List<Table> getTables();
 

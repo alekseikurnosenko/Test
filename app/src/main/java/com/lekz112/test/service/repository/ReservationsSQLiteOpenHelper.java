@@ -20,7 +20,9 @@ public class ReservationsSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(RestaurantTablesModel.CREATE_TABLE);
+        db.execSQL(RestaurantTablesModel.CREATE_INDEX);
         db.execSQL(CustomersModel.CREATE_TABLE);
+        db.execSQL(ReservationsModel.CREATE_TABLE);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.lekz112.test.ui.main.list;
 
 import com.lekz112.test.R;
 import com.lekz112.test.service.Customer;
+import com.lekz112.test.ui.OnItemClickListener;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -53,9 +54,4 @@ public class CustomersAdapter extends RecyclerView.Adapter<CustomerViewHolder> {
         this.clickListener = clickListener;
     }
 
-    public interface OnItemClickListener {
-
-        void onItemClick(int position);
-
-    }
 }

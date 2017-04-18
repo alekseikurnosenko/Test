@@ -6,6 +6,7 @@ import com.lekz112.test.R;
 import com.lekz112.test.di.util.ControllerInjection;
 import com.lekz112.test.service.Customer;
 import com.lekz112.test.service.network.NetworkService;
+import com.lekz112.test.ui.OnItemClickListener;
 import com.lekz112.test.ui.main.tables.TablesController;
 import com.lekz112.test.ui.util.Titleable;
 
@@ -27,7 +28,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
 
-public class CustomersController extends Controller implements Titleable, CustomersAdapter.OnItemClickListener {
+public class CustomersController extends Controller implements Titleable, OnItemClickListener {
 
     private static final int PROGRESS = 0;
     private static final int CONTENT = 1;
