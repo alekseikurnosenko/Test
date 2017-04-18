@@ -1,0 +1,15 @@
+CREATE TABLE customers (
+    _id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    customer_id INTEGER NOT NULL,
+    first_name TEXT,
+    last_name TEXT
+);
+
+select_all:
+SELECT * FROM customers;
+
+insert_customer:
+INSERT INTO customers(customer_id, last_name, last_name) VALUES (?, ?, ?);
+
+delete_all:
+DELETE FROM customers;

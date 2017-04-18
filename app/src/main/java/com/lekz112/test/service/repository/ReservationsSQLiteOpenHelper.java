@@ -6,9 +6,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import javax.inject.Inject;
 
-/**
- * Created by aleksey.kurnosenko on 18.04.2017.
- */
 
 public class ReservationsSQLiteOpenHelper extends SQLiteOpenHelper {
 
@@ -22,8 +19,8 @@ public class ReservationsSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(RestaurantTableModel.CREATE_TABLE);
-        db.execSQL(CustomerModel.CREATE_TABLE);
+        db.execSQL(RestaurantTablesModel.CREATE_TABLE);
+        db.execSQL(CustomersModel.CREATE_TABLE);
     }
 
     @Override

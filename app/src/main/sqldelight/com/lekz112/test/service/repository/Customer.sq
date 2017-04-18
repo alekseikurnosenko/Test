@@ -1,6 +1,0 @@
-CREATE TABLE customers (
-    _id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    customer_id INTEGER NOT NULL,
-    first_name TEXT,
-    second_name TEXT
-);

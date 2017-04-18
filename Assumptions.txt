@@ -1,3 +1,4 @@
+- For simplicity sake, we assume each customer has non-empty first name and last name
 - Customer can reserve multiple tables (big company would need several tables)
 - Multiple customers could reserve same table (for example they both participate in loyalty program).
 - User can't make reservation for unavailable table.

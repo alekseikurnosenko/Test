@@ -5,14 +5,19 @@ import com.lekz112.test.service.Table;
 import com.squareup.sqldelight.RowMapper;
 
 @AutoValue
-public abstract class RestaurantTableDao implements RestaurantTableModel {
+/*package*/ abstract class RestaurantTableDao implements RestaurantTablesModel {
 
-    public static final Factory<RestaurantTableDao> FACTORY = new Factory<>(null);
+    static final Factory<RestaurantTableDao> FACTORY = new Factory<>(AutoValue_RestaurantTableDao::new);
 
-    public static final RowMapper<RestaurantTableDao> SELECT_ALL_MAPPER = FACTORY.select_allMapper();
+    static final RowMapper<TableWithReservations> SELECT_ALL_MAPPER = FACTORY.select_allMapper(AutoValue_RestaurantTableDao_TableWithReservations::new, CustomerDao.FACTORY);
 
-    public Table toTable() {
+    Table toTable() {
         return Table.create(table_id(), available());
+    }
+
+    @AutoValue
+    abstract static class TableWithReservations implements Select_allModel<RestaurantTableDao, CustomerDao> {
+
     }
 
 }

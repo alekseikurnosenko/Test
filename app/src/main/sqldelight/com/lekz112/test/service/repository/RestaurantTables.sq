@@ -1,0 +1,22 @@
+import java.lang.Boolean;
+
+CREATE TABLE restaurant_tables (
+    _id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    table_id INTEGER NOT NULL,
+    available INTEGER as Boolean NOT NULL
+
+);
+
+create_index:
+CREATE UNIQUE INDEX table_id_index ON restaurant_tables(table_id);
+
+select_all:
+SELECT a.*,c.* FROM restaurant_tables a
+LEFT JOIN reservations b ON a.table_id == b.table_id
+LEFT JOIN customers c ON b.customer_id = c.customer_id;
+
+insert_table:
+INSERT INTO restaurant_tables(table_id, available) VALUES (?, ?);
+
+delete_all:
+DELETE FROM restaurant_tables;

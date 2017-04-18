@@ -1,0 +1,12 @@
+CREATE TABLE reservations (
+    _id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    table_id INTEGER NOT NULL,
+    customer_id INTEGER NOT NULL
+    -- additional info about reservation goes here
+);
+
+add_reservation:
+INSERT INTO reservations (table_id, customer_id) VALUES (?, ?);
+
+delete_all:
+DELETE FROM reservations;
