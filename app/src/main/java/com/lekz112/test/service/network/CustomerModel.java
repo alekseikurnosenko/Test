@@ -1,20 +1,30 @@
 package com.lekz112.test.service.network;
 
-import com.google.gson.annotations.SerializedName;
+import android.text.TextUtils;
 
 import com.annimon.stream.Optional;
+import com.google.gson.annotations.SerializedName;
 import com.lekz112.test.service.Customer;
 
-public class CustomerModel {
+/*package*/ class CustomerModel {
 
     @SerializedName("customerFirstName")
-    public String firstName;
+    String firstName;
     @SerializedName("customerLastName")
-    public String lastName;
+    String lastName;
     @SerializedName("id")
     public Long id;
 
-    public Optional<Customer> convert() {
-        return Optional.of(Customer.create(firstName, lastName, id));
+    Optional<Customer> convert() {
+        if (TextUtils.isEmpty(firstName) && TextUtils.isEmpty(lastName)) {
+            // We assume there are no such people
+            return Optional.empty();
+        }
+        // We allow first name or last name to be null
+        // We use empty string in that case, as we really don't want to deal with nulls
+        return Optional.of(Customer.create(
+                firstName != null ? firstName : "",
+                lastName != null ? lastName : "",
+                id));
     }
 }
