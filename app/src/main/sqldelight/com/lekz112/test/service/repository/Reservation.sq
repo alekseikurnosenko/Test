@@ -1,0 +1,6 @@
+CREATE TABLE reservation (
+    _id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    table_id INTEGER NOT NULL,
+    customer_id INTEGER NOT NULL
+
+);

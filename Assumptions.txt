@@ -1,0 +1,4 @@
+- Customer can reserve multiple tables (big company would need several tables)
+- Multiple customers could reserve same table (for example they both participate in loyalty program).
+- User can't make reservation for unavailable table.
+- Reserving table does not affect it availability

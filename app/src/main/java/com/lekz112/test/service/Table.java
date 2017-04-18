@@ -5,9 +5,11 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Table {
 
+    public abstract long id();
+
     public abstract boolean available();
 
-    public static Table create(boolean available) {
-        return null;
+    public static Table create(long id, boolean available) {
+        return new AutoValue_Table(id, available);
     }
 }
