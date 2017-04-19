@@ -1,8 +1,8 @@
 package com.lekz112.test.di;
 
 import com.lekz112.test.di.util.ApplicationScope;
-import com.lekz112.test.service.network.NetworkService;
-import com.lekz112.test.service.network.RestNetworkService;
+import com.lekz112.test.service.network.ReservationService;
+import com.lekz112.test.service.network.RestReservationService;
 
 import dagger.Module;
 import dagger.Provides;
@@ -12,7 +12,7 @@ public class ServiceModule {
 
     @ApplicationScope
     @Provides
-    public NetworkService networkService(RestNetworkService restNetworkService) {
+    public ReservationService networkService(RestReservationService restNetworkService) {
         return restNetworkService;
     }
 }

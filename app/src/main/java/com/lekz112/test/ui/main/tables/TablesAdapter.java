@@ -1,13 +1,13 @@
 package com.lekz112.test.ui.main.tables;
 
-import com.lekz112.test.R;
-import com.lekz112.test.service.Table;
-import com.lekz112.test.ui.OnItemClickListener;
-
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.lekz112.test.R;
+import com.lekz112.test.service.Table;
+import com.lekz112.test.ui.OnItemClickListener;
 
 import java.util.List;
 
@@ -26,13 +26,13 @@ public class TablesAdapter extends RecyclerView.Adapter<TableViewHolder> {
     @Override
     public TableViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_table, parent, false);
-        return new TableViewHolder(view, clickListener);
+        return new TableViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(TableViewHolder holder, int position) {
         Table table = getTable(position);
-        holder.show(table);
+        holder.show(table, clickListener);
     }
 
     @Override

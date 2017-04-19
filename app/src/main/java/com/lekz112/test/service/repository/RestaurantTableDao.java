@@ -9,7 +9,8 @@ import com.squareup.sqldelight.RowMapper;
 
     static final Factory<RestaurantTableDao> FACTORY = new Factory<>(AutoValue_RestaurantTableDao::new);
 
-    static final RowMapper<TableWithReservations> SELECT_ALL_MAPPER = FACTORY.select_allMapper(AutoValue_RestaurantTableDao_TableWithReservations::new, CustomerDao.FACTORY);
+    static final RowMapper<TableWithReservations> SELECT_ALL_MAPPER =
+            FACTORY.select_allMapper(AutoValue_RestaurantTableDao_TableWithReservations::new, CustomerDao.FACTORY);
 
     Table toTable() {
         return Table.create(table_id(), available());

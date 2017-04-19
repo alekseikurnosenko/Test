@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
+        android:textSize="@dimen/item_customer_text_size"
         android:padding="@dimen/content_padding"
         android:text="@string/loremipsum"
         android:textStyle="bold" />

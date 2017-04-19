@@ -1,10 +1,10 @@
 package com.lekz112.test.di;
 
 import com.google.gson.Gson;
-
 import com.lekz112.test.di.util.ApplicationScope;
 import com.lekz112.test.service.network.APIEndpoint;
 import com.lekz112.test.service.network.NetworkDelayInterceptor;
+import com.lekz112.test.service.network.StubAPIEndpoint;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +28,8 @@ public class RetrofitModule {
     @ApplicationScope
     @Provides
     public APIEndpoint githubEndpoint(@Named(API_ENDPOINT) HttpUrl httpUrl, Retrofit.Builder retrofit) {
-        return retrofit.baseUrl(httpUrl).build().create(APIEndpoint.class);
+        return new StubAPIEndpoint();
+        //return retrofit.baseUrl(httpUrl).build().create(APIEndpoint.class);
     }
 
     @Provides

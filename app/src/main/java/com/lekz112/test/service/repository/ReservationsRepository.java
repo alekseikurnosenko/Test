@@ -5,6 +5,7 @@ import com.lekz112.test.service.Table;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 
 public interface ReservationsRepository {
@@ -17,5 +18,7 @@ public interface ReservationsRepository {
 
     void setTables(List<Table> tables);
 
+    Completable placeReservation(Table table, Customer customer);
 
+    Completable clearReservations();
 }

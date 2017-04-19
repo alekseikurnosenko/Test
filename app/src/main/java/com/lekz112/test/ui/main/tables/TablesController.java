@@ -1,19 +1,19 @@
 package com.lekz112.test.ui.main.tables;
 
-import com.bluelinelabs.conductor.Controller;
-import com.lekz112.test.R;
-import com.lekz112.test.di.util.ControllerInjection;
-import com.lekz112.test.service.network.NetworkService;
-import com.lekz112.test.ui.OnItemClickListener;
-import com.lekz112.test.ui.view.ViewFlipper;
-
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
+import com.bluelinelabs.conductor.Controller;
+import com.lekz112.test.R;
+import com.lekz112.test.di.util.ControllerInjection;
+import com.lekz112.test.service.Customer;
+import com.lekz112.test.service.Table;
+import com.lekz112.test.service.network.ReservationService;
+import com.lekz112.test.ui.OnItemClickListener;
+import com.lekz112.test.ui.view.ViewFlipper;
 
 import javax.inject.Inject;
 
@@ -35,10 +35,20 @@ public class TablesController extends Controller implements OnItemClickListener 
     @Bind(R.id.tables_content)
     RecyclerView recyclerView;
     @Inject
-    NetworkService networkService;
+    ReservationService reservationService;
 
     private Disposable tablesSubscription = Disposables.disposed();
     private TablesAdapter tablesAdapter;
+    private Customer customer;
+
+
+    public TablesController() {
+
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
     @NonNull
     @Override
@@ -46,6 +56,10 @@ public class TablesController extends Controller implements OnItemClickListener 
         ControllerInjection.inject(this);
         View view = inflater.inflate(R.layout.view_tables, container, false);
         ButterKnife.bind(this, view);
+
+        if (customer == null) {
+            throw new IllegalStateException("Customer expected");
+        }
 
         recyclerView.setLayoutManager(new TablesGridLayoutManager(container.getContext(), R.dimen.item_table_size,
                 R.dimen.activity_vertical_margin));
@@ -62,11 +76,10 @@ public class TablesController extends Controller implements OnItemClickListener 
 
     private void loadTables() {
         tablesSubscription.dispose();
-        tablesSubscription = networkService.getTables()
+        tablesSubscription = reservationService.getTables()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(tables -> {
                     flipper.setDisplayedChild(CONTENT);
-                    Log.d("TEMP", "Update!");
                     tablesAdapter.setTables(tables);
                 }, error -> flipper.setDisplayedChild(ERROR));
     }
@@ -80,6 +93,10 @@ public class TablesController extends Controller implements OnItemClickListener 
 
     @Override
     public void onItemClick(int position) {
-        Toast.makeText(getActivity(), "Position " + position, Toast.LENGTH_SHORT).show();
+        Table table = tablesAdapter.getTable(position);
+        // TODO: show some animation while we reserve table
+        reservationService.placeReservation(table, customer)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 }

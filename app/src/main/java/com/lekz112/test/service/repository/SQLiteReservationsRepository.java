@@ -1,28 +1,32 @@
 package com.lekz112.test.service.repository;
 
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
-import com.lekz112.test.service.Customer;
-import com.lekz112.test.service.Table;
-import com.squareup.sqldelight.SqlDelightStatement;
-
 import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
+import com.lekz112.test.di.util.ApplicationScope;
+import com.lekz112.test.service.Customer;
+import com.lekz112.test.service.Table;
+import com.squareup.sqldelight.SqlDelightStatement;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
 
+@ApplicationScope
 public class SQLiteReservationsRepository implements ReservationsRepository {
 
     private final SQLiteDatabase database;
+    private final BehaviorSubject<Object> tablesSubject = BehaviorSubject.create();
 
     @Inject
     public SQLiteReservationsRepository(ReservationsSQLiteOpenHelper helper) {
@@ -63,10 +67,13 @@ public class SQLiteReservationsRepository implements ReservationsRepository {
 
     @Override
     public Observable<List<Table>> getTables() {
-        return Observable.fromCallable(this::getTablesList)
+        // NOTE: we we want to subscribe on io scheduler, so when clients subscribe, map runs on io scheduler
+        // We observe on io scheduler, so that when we invoke onNext it also run on io scheduler
+        return tablesSubject
+                .startWith(new Object())
                 .subscribeOn(Schedulers.io())
-                .repeatWhen(observable -> observable.delay(5, TimeUnit.SECONDS));
-        // Nice
+                .observeOn(Schedulers.io())
+                .map(ignored -> getTablesList());
     }
 
     @SuppressLint("NewApi")
@@ -123,5 +130,35 @@ public class SQLiteReservationsRepository implements ReservationsRepository {
         } finally {
             database.endTransaction();
         }
+    }
+
+    @Override
+    public Completable placeReservation(Table table, Customer customer) {
+        return Completable.fromAction(() -> {
+            database.beginTransaction();
+            try {
+                ReservationsModel.Add_reservation addReservation = new ReservationsModel.Add_reservation(database);
+                addReservation.bind(table.id(), customer.id());
+                addReservation.program.executeInsert();
+                database.setTransactionSuccessful();
+                tablesSubject.onNext(new Object());
+            } finally {
+                database.endTransaction();
+            }
+        });
+    }
+
+    @Override
+    public Completable clearReservations() {
+        return Completable.fromAction(() -> {
+            database.beginTransaction();
+            try {
+                database.execSQL(ReservationsModel.DELETE_ALL);
+                database.setTransactionSuccessful();
+                tablesSubject.onNext(new Object());
+            } finally {
+                database.endTransaction();
+            }
+        });
     }
 }

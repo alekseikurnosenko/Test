@@ -11,16 +11,17 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 
 @ApplicationScope
-public class RestNetworkService implements NetworkService {
+public class RestReservationService implements ReservationService {
 
     private final APIEndpoint endpoint;
     private final ReservationsRepository repository;
 
     @Inject
-    public RestNetworkService(APIEndpoint endpoint, ReservationsRepository repository) {
+    public RestReservationService(APIEndpoint endpoint, ReservationsRepository repository) {
         this.endpoint = endpoint;
         this.repository = repository;
     }
@@ -58,6 +59,16 @@ public class RestNetworkService implements NetworkService {
 
         List<Observable<List<Table>>> observables = Arrays.asList(networkObservable, localObservable);
 
-        return Observable.concatEager(observables);
+        return Observable.merge(observables);
+    }
+
+    @Override
+    public Completable placeReservation(Table table, Customer customer) {
+        return repository.placeReservation(table, customer);
+    }
+
+    @Override
+    public Completable clearReservations() {
+        return repository.clearReservations();
     }
 }

@@ -1,15 +1,5 @@
 package com.lekz112.test.ui.main.list;
 
-import com.bluelinelabs.conductor.Controller;
-import com.bluelinelabs.conductor.RouterTransaction;
-import com.lekz112.test.R;
-import com.lekz112.test.di.util.ControllerInjection;
-import com.lekz112.test.service.Customer;
-import com.lekz112.test.service.network.NetworkService;
-import com.lekz112.test.ui.OnItemClickListener;
-import com.lekz112.test.ui.main.tables.TablesController;
-import com.lekz112.test.ui.util.Titleable;
-
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewFlipper;
+
+import com.bluelinelabs.conductor.Controller;
+import com.bluelinelabs.conductor.RouterTransaction;
+import com.lekz112.test.R;
+import com.lekz112.test.di.util.ControllerInjection;
+import com.lekz112.test.service.Customer;
+import com.lekz112.test.service.network.ReservationService;
+import com.lekz112.test.ui.OnItemClickListener;
+import com.lekz112.test.ui.main.tables.TablesController;
+import com.lekz112.test.ui.util.Titleable;
 
 import javax.inject.Inject;
 
@@ -42,7 +42,7 @@ public class CustomersController extends Controller implements Titleable, OnItem
     SwipeRefreshLayout swipeRefreshLayout;
 
     @Inject
-    NetworkService networkService;
+    ReservationService reservationService;
     @Inject
     CustomersAdapter customersAdapter;
 
@@ -80,7 +80,7 @@ public class CustomersController extends Controller implements Titleable, OnItem
     private void loadCustomers() {
         viewFlipper.setDisplayedChild(PROGRESS);
         customersSubscription.dispose();
-        customersSubscription = networkService.getCustomers()
+        customersSubscription = reservationService.getCustomers()
                 .observeOn(AndroidSchedulers.mainThread())
                 .doAfterTerminate(() -> swipeRefreshLayout.setRefreshing(false))
                 .subscribe(customers -> {
@@ -98,7 +98,7 @@ public class CustomersController extends Controller implements Titleable, OnItem
     public void onItemClick(int position) {
         Customer customer = customersAdapter.getCustomer(position);
         TablesController tablesController = new TablesController();
-        // Pass customer?
+        tablesController.setCustomer(customer);
         getRouter().pushController(RouterTransaction.with(tablesController));
 
     }
