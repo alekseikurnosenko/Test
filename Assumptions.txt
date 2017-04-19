@@ -1,6 +1,6 @@
 - For simplicity sake, each customer has non-empty first name and last name
 - If table is reserved, it's availability can't change
-- Customer can reserve multiple tables (big company would need several tables)
-- Multiple customers could reserve same table (for example they both participate in loyalty program).
+- Customer can't reserve multiple tables
+- Multiple customers can't reserve same table.
 - User can't make reservation for unavailable table.
 - Reserving table does not affect it availability
