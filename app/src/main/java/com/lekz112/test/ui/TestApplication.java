@@ -28,6 +28,8 @@ import javax.inject.Named;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasDispatchingActivityInjector;
 import dagger.android.HasDispatchingBroadcastReceiverInjector;
+import io.reactivex.exceptions.UndeliverableException;
+import io.reactivex.plugins.RxJavaPlugins;
 
 public class TestApplication extends Application implements HasDispatchingActivityInjector,
         HasDispatchingBroadcastReceiverInjector {
@@ -52,7 +54,8 @@ public class TestApplication extends Application implements HasDispatchingActivi
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             manager.set(AlarmManager.RTC_WAKEUP, timeToTrigger, pendingIntent);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             manager.setExact(AlarmManager.RTC_WAKEUP, timeToTrigger, pendingIntent);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeToTrigger, pendingIntent);
@@ -71,6 +74,14 @@ public class TestApplication extends Application implements HasDispatchingActivi
         AndroidThreeTen.init(this);
         buildComponent().inject(this);
         //buildStubComponent().inject(this);
+
+
+        RxJavaPlugins.setErrorHandler(e -> {
+            // Error was not delivered, probably because we dispose observable
+            if (e instanceof UndeliverableException) {
+                Log.e(TAG, "Unhandled Rx error", e);
+            }
+        });
 
         if (buildPendingIntent(this, PendingIntent.FLAG_NO_CREATE) == null) {
             Log.d(TAG, "App create, no pending intent found");

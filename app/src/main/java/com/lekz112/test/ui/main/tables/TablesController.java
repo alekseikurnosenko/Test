@@ -1,11 +1,5 @@
 package com.lekz112.test.ui.main.tables;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.bluelinelabs.conductor.Controller;
 import com.lekz112.test.R;
 import com.lekz112.test.di.util.ControllerInjection;
@@ -13,7 +7,14 @@ import com.lekz112.test.service.Customer;
 import com.lekz112.test.service.Table;
 import com.lekz112.test.service.network.ReservationService;
 import com.lekz112.test.ui.OnItemClickListener;
+import com.lekz112.test.ui.util.Titleable;
 import com.lekz112.test.ui.view.ViewFlipper;
+
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
@@ -24,7 +25,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
 
 
-public class TablesController extends Controller implements OnItemClickListener {
+public class TablesController extends Controller implements OnItemClickListener, Titleable {
 
     private static final int PROGRESS = 0;
     private static final int CONTENT = 1;
@@ -98,5 +99,10 @@ public class TablesController extends Controller implements OnItemClickListener 
         reservationService.placeReservation(table, customer)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
+    }
+
+    @Override
+    public String getTitle() {
+        return getActivity().getString(R.string.customers_title);
     }
 }

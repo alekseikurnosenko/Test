@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 @ApplicationScope
 public class RestReservationService implements ReservationService {
@@ -28,6 +29,7 @@ public class RestReservationService implements ReservationService {
 
     @Override
     public Observable<List<Customer>> getCustomers() {
+
         return endpoint.customers()
                 .flattenAsObservable(customersList -> customersList)
                 .map(CustomerModel::convert)
@@ -35,14 +37,14 @@ public class RestReservationService implements ReservationService {
                 .map(Optional::get)
                 .toList()
                 .toObservable()
+                .observeOn(Schedulers.io())
                 .doOnNext(repository::setCustomers)
                 // we merge two observables - network and local, but stop local as soon as network emitted
-                .publish(network ->
-                        Observable.merge(network,
-                                repository.getCustomers()
-                                        .filter(list -> list.size() > 0)
-                                        .takeUntil(network)))
+                // On error try to return cached data
+                .publish(network -> Observable.merge(network,
+                        repository.getCustomers().takeUntil(network)))
                 .onErrorResumeNext(repository.getCustomers());
+
     }
 
     @Override
@@ -56,6 +58,7 @@ public class RestReservationService implements ReservationService {
                 .zipWith(Observable.rangeLong(0, Long.MAX_VALUE), (available, index) -> Table.create(index, available))
                 .toList()
                 .toObservable()
+                .observeOn(Schedulers.io())
                 .doOnNext(repository::setTables);
 
         Observable<List<Table>> localObservable = repository.getTables()
