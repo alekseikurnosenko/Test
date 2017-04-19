@@ -1,14 +1,5 @@
 package com.lekz112.test.ui;
 
-import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.Application;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
-
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.lekz112.test.di.ApplicationComponent;
 import com.lekz112.test.di.ApplicationModule;
@@ -21,7 +12,18 @@ import com.lekz112.test.ui.receiver.ClearReservationReceiver;
 
 import org.threeten.bp.Duration;
 
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.Application;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.util.Log;
+
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasDispatchingActivityInjector;
@@ -31,16 +33,19 @@ public class TestApplication extends Application implements HasDispatchingActivi
         HasDispatchingBroadcastReceiverInjector {
 
     private final static String TAG = TestApplication.class.getSimpleName();
+    private final static String PREF_TIMER = "prefTimer";
 
     @Inject
     DispatchingAndroidInjector<Activity> activityDispatchingAndroidInjector;
     @Inject
     DispatchingAndroidInjector<BroadcastReceiver> receiverDispatchingAndroidInjector;
+    @Inject
+    @Named(ApplicationModule.CLEAR_RESERVATION)
+    Duration clearReservationDuration;
 
     public static void scheduleAlarm(Context context, Duration clearReservationPeriod) {
-        Intent clearIntent = new Intent(context, ClearReservationReceiver.class);
-        clearIntent.setPackage(context.getPackageName());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, clearIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Log.d(TAG, "Scheduling alarm");
+        PendingIntent pendingIntent = buildPendingIntent(context, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         long timeToTrigger = clearReservationPeriod.plusMillis(System.currentTimeMillis()).toMillis();
@@ -54,12 +59,25 @@ public class TestApplication extends Application implements HasDispatchingActivi
         }
     }
 
+    private static PendingIntent buildPendingIntent(Context context, int flags) {
+        Intent clearIntent = new Intent(context, ClearReservationReceiver.class);
+        clearIntent.setPackage(context.getPackageName());
+        return PendingIntent.getBroadcast(context, 0, clearIntent, flags);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         AndroidThreeTen.init(this);
         buildComponent().inject(this);
         //buildStubComponent().inject(this);
+
+        if (buildPendingIntent(this, PendingIntent.FLAG_NO_CREATE) == null) {
+            Log.d(TAG, "App create, no pending intent found");
+            // No alarm was scheduled
+            scheduleAlarm(this, clearReservationDuration);
+        }
+
     }
 
     @Override

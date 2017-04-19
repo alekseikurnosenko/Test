@@ -1,16 +1,15 @@
 package com.lekz112.test.service.repository;
 
-import android.annotation.SuppressLint;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.lekz112.test.di.util.ApplicationScope;
 import com.lekz112.test.service.Customer;
 import com.lekz112.test.service.Table;
 import com.squareup.sqldelight.SqlDelightStatement;
+
+import android.annotation.SuppressLint;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,15 +34,17 @@ public class SQLiteReservationsRepository implements ReservationsRepository {
 
     @SuppressLint("NewApi")
     @Override
-    public List<Customer> getCustomers() {
-        List<Customer> results = new ArrayList<>();
-        SqlDelightStatement query = CustomerDao.FACTORY.select_all();
-        try (Cursor cursor = database.rawQuery(query.statement, query.args)) {
-            while (cursor.moveToNext()) {
-                results.add(CustomerDao.SELECT_ALL_MAPPER.map(cursor).toCustomer());
+    public Observable<List<Customer>> getCustomers() {
+        return Observable.fromCallable(() -> {
+            List<Customer> results = new ArrayList<>();
+            SqlDelightStatement query = CustomerDao.FACTORY.select_all();
+            try (Cursor cursor = database.rawQuery(query.statement, query.args)) {
+                while (cursor.moveToNext()) {
+                    results.add(CustomerDao.SELECT_ALL_MAPPER.map(cursor).toCustomer());
+                }
             }
-        }
-        return results;
+            return results;
+        }).subscribeOn(Schedulers.io());
     }
 
     @Override
@@ -78,7 +79,6 @@ public class SQLiteReservationsRepository implements ReservationsRepository {
 
     @SuppressLint("NewApi")
     private List<Table> getTablesList() {
-        Log.d("TEMP", "getTablesList!");
         List<Table> results = new ArrayList<>();
         SqlDelightStatement query = RestaurantTableDao.FACTORY.select_all();
 

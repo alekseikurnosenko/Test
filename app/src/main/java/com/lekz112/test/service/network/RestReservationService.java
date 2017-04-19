@@ -36,14 +36,19 @@ public class RestReservationService implements ReservationService {
                 .toList()
                 .toObservable()
                 .doOnNext(repository::setCustomers)
-                .startWith(repository.getCustomers())
-                .filter(list -> list.size() > 0);
+                // we merge two observables - network and local, but stop local as soon as network emitted
+                .publish(network ->
+                        Observable.merge(network,
+                                repository.getCustomers()
+                                        .filter(list -> list.size() > 0)
+                                        .takeUntil(network)))
+                .onErrorResumeNext(repository.getCustomers());
     }
 
     @Override
     public Observable<List<Table>> getTables() {
         // NOTE: normally we would expect every table to have some unique index
-        // we don't have any, so use their index as unqiue id
+        // we don't have any, so use their index as unique id
 
         Observable<List<Table>> networkObservable = endpoint.tables()
                 .flattenAsObservable(tablesList -> tablesList)
@@ -52,14 +57,13 @@ public class RestReservationService implements ReservationService {
                 .toList()
                 .toObservable()
                 .doOnNext(repository::setTables);
-                // we merge two observables - network and local, but stop local as soon as network emitted
-        //
+
         Observable<List<Table>> localObservable = repository.getTables()
                 .filter(list -> list.size() > 0);
 
         List<Observable<List<Table>>> observables = Arrays.asList(networkObservable, localObservable);
 
-        return Observable.merge(observables);
+        return Observable.merge(observables).onErrorResumeNext(localObservable);
     }
 
     @Override

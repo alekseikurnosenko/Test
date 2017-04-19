@@ -10,7 +10,7 @@ import io.reactivex.Observable;
 
 public interface ReservationsRepository {
 
-    List<Customer> getCustomers();
+    Observable<List<Customer>> getCustomers();
 
     void setCustomers(List<Customer> customer);
 

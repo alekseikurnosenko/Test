@@ -1,11 +1,13 @@
 package com.lekz112.test.di;
 
-import android.app.Application;
-
 import com.lekz112.test.di.util.ApplicationScope;
 
 import org.threeten.bp.Duration;
 import org.threeten.bp.temporal.ChronoUnit;
+
+import android.app.Application;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import javax.inject.Named;
 
@@ -33,6 +35,12 @@ public class ApplicationModule {
     @Named(CLEAR_RESERVATION)
     @Provides
     public Duration clearReservationsTimeout() {
-        return Duration.of(15, ChronoUnit.SECONDS);
+        return Duration.of(10, ChronoUnit.MINUTES);
+    }
+
+    @ApplicationScope
+    @Provides
+    public SharedPreferences sharedPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(application);
     }
 }
