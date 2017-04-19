@@ -9,11 +9,16 @@ import com.squareup.sqldelight.SqlDelightStatement;
 import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 public class SQLiteReservationsRepository implements ReservationsRepository {
 
@@ -55,9 +60,18 @@ public class SQLiteReservationsRepository implements ReservationsRepository {
         }
     }
 
-    @SuppressLint("NewApi")
+
     @Override
-    public List<Table> getTables() {
+    public Observable<List<Table>> getTables() {
+        return Observable.fromCallable(this::getTablesList)
+                .subscribeOn(Schedulers.io())
+                .repeatWhen(observable -> observable.delay(5, TimeUnit.SECONDS));
+        // Nice
+    }
+
+    @SuppressLint("NewApi")
+    private List<Table> getTablesList() {
+        Log.d("TEMP", "getTablesList!");
         List<Table> results = new ArrayList<>();
         SqlDelightStatement query = RestaurantTableDao.FACTORY.select_all();
 

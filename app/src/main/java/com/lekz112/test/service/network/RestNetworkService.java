@@ -6,12 +6,12 @@ import com.lekz112.test.service.Customer;
 import com.lekz112.test.service.Table;
 import com.lekz112.test.service.repository.ReservationsRepository;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
 
 @ApplicationScope
 public class RestNetworkService implements NetworkService {
@@ -43,19 +43,21 @@ public class RestNetworkService implements NetworkService {
     public Observable<List<Table>> getTables() {
         // NOTE: normally we would expect every table to have some unique index
         // we don't have any, so use their index as unqiue id
-        return endpoint.tables()
+
+        Observable<List<Table>> networkObservable = endpoint.tables()
                 .flattenAsObservable(tablesList -> tablesList)
                 .filter(table -> table != null)
                 .zipWith(Observable.rangeLong(0, Long.MAX_VALUE), (available, index) -> Table.create(index, available))
                 .toList()
                 .toObservable()
-                .doOnNext(repository::setTables)
+                .doOnNext(repository::setTables);
                 // we merge two observables - network and local, but stop local as soon as network emitted
-                .publish(networkTables -> Observable.merge(networkTables,
-                        Observable.fromCallable(repository::getTables)
-                                .subscribeOn(Schedulers.io())
-                                .filter(list -> list.size() > 0)
-                                .takeUntil(networkTables)
-                ));
+        //
+        Observable<List<Table>> localObservable = repository.getTables()
+                .filter(list -> list.size() > 0);
+
+        List<Observable<List<Table>>> observables = Arrays.asList(networkObservable, localObservable);
+
+        return Observable.concatEager(observables);
     }
 }

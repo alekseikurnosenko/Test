@@ -9,6 +9,7 @@ import com.lekz112.test.ui.view.ViewFlipper;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +66,7 @@ public class TablesController extends Controller implements OnItemClickListener 
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(tables -> {
                     flipper.setDisplayedChild(CONTENT);
+                    Log.d("TEMP", "Update!");
                     tablesAdapter.setTables(tables);
                 }, error -> flipper.setDisplayedChild(ERROR));
     }
